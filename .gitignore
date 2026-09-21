@@ -1,0 +1,69 @@
+# Dependencies
+node_modules/
+
+# SvelteKit & Build Outputs
+.svelte-kit/
+build/
+dist/
+.output/
+package/
+
+# Deployment & Hosting Providers
+.vercel/
+.netlify/
+.wrangler/
+
+# Vite Cache & Timestamps
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Testing & Coverage
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+
+# TypeScript
+*.tsbuildinfo
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE & Editor Temporary Files
+*.swp
+*.swo
+*~
+.idea/
+*.sublime-workspace
+*.sublime-project
+.project
+.settings/
+
+# Optional Local Editor Configuration
+# Uncomment the following if you want to keep editor-specific local configs untracked:
+# .vscode/*
+# !.vscode/settings.json
+# !.vscode/extensions.json
+# .lazy.lua
+# .nvim.lua
