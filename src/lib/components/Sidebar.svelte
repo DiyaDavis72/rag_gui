@@ -9,7 +9,9 @@
   import { page } from "$app/state";
   import MessageCircle from "@lucide/svelte/icons/message-circle";
   import Menu from "@lucide/svelte/icons/menu";
+  import SquarePen from "@lucide/svelte/icons/square-pen";
   import SidebarItem from "$lib/components/Sidebar-item.svelte";
+  import { getConversationState } from "$lib/state/ConversationState.svelte";
   let activeUrl = $state(page.url.pathname);
   const demoSidebarUi = uiHelpers();
   let isCollapsed = $state(false);
@@ -20,10 +22,13 @@
     activeUrl = page.url.pathname;
   });
   let { children } = $props();
+  const convoState = getConversationState();
 </script>
 
 <SidebarButton onclick={demoSidebarUi.toggle} class="mb-2" />
-<div class="flex flex-row h-svh overflow-hidden bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+<div
+  class="flex flex-row h-svh overflow-hidden bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+>
   <Sidebar
     breakpoint="md"
     isOpen={isDemoOpen}
@@ -49,7 +54,9 @@
       )}
     >
       {#if !isCollapsed}
-        <span class="text-lg font-semibold whitespace-nowrap text-gray-900 dark:text-white">
+        <span
+          class="text-lg font-semibold whitespace-nowrap text-gray-900 dark:text-white"
+        >
           History
         </span>
       {/if}
@@ -61,8 +68,49 @@
         <Menu />
       </button>
     </div>
+
+    <!-- New Conversation Button -->
+    <a
+      href="/"
+      class={cn(
+        "flex items-center gap-2 mb-3 p-2 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-900 dark:text-white transition-colors",
+        isCollapsed ? "justify-center" : "justify-start"
+      )}
+      title="New conversation"
+    >
+      <SquarePen class="w-5 h-5 shrink-0 text-primary-600 dark:text-primary-500" />
+      {#if !isCollapsed}
+        <span class="text-sm font-medium whitespace-nowrap">New conversation</span>
+      {/if}
+    </a>
+
     <SidebarGroup class="pt-2 ">
-      <SidebarItem Icon={MessageCircle} label="Chat text - 1" {isCollapsed} />
+      {#if convoState.isLoading}
+        <p
+          class={cn("text-gray-500 dark:text-gray-400", {
+            hidden: isCollapsed,
+          })}
+        >
+          Loading conversations...
+        </p>
+      {:else if convoState.conversations.size === 0}
+        <p
+          class={cn("text-gray-500 dark:text-gray-400", {
+            hidden: isCollapsed,
+          })}
+        >
+          No conversations
+        </p>
+      {:else}
+        {#each convoState.conversations.values() as conversation (conversation.id)}
+          <SidebarItem
+            Icon={MessageCircle}
+            label={conversation.title}
+            href={`/?id=${conversation.id}`}
+            {isCollapsed}
+          />
+        {/each}
+      {/if}
     </SidebarGroup>
   </Sidebar>
   {@render children()}

@@ -8,10 +8,15 @@ export type Conversation = {
 };
 
 export type Message = {
+  id: number
   conversationId: string;
   role: 'user' | 'assistant' | 'system' | 'tool';
   content: string;
-  timestamp: number;
+  timestamp: Date;
+  thinking?: boolean;
+  chunks: string[];
+  temprature: number;
+  processed: boolean;
 }
 
 export const StoreNames = {

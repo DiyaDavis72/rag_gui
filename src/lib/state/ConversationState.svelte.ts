@@ -1,6 +1,7 @@
 import { createConvo } from "$lib/idb/createConvo";
 import { getAllConversations } from "$lib/idb/getAllConversations";
 import type { Conversation } from "$lib/idb/types";
+import { updateConvo as updateConvoDb } from "$lib/idb/updateConvo";
 import { getContext, setContext } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
 
@@ -38,12 +39,28 @@ class ConversationState {
     this.activeConvoId = convoId;
   }
 
+  async updateConvo(convo: Partial<Conversation> & { id: string; }) {
+    const existingConvo = this.conversations.get(convo.id);
+
+    if (!existingConvo) {
+      this.isError = new Error(`Conversation with ID ${convo.id} does not exist.`);
+      return
+    }
+
+    const updatedConvo = { ...existingConvo, ...convo };
+
+    const result = await updateConvoDb(updatedConvo);
+
+    this.conversations.set(convo.id, result);
+
+  }
+
   async newConvo() {
     const id = crypto.randomUUID();
     const newConvo: Conversation = {
       id,
       timestamp: Date.now(),
-      title: "New Conversation",
+      title: "",
       model: "qwen2.5:14b",
       think: false,
       temprature: 0
@@ -53,6 +70,7 @@ class ConversationState {
     this.conversations.set(id, newConvo);
 
     this.activeConvoId = id;
+    return newConvo;
   }
 
 }
