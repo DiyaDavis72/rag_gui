@@ -1,3 +1,5 @@
+import type { Message } from "$lib/server/types";
+
 export type Conversation = {
   id: string;
   timestamp: number;
@@ -7,21 +9,25 @@ export type Conversation = {
   temprature: number;
 };
 
-export type Message = {
-  id: number
+export type MessageDB = {
+  id: number;
   conversationId: string;
-  role: 'user' | 'assistant' | 'system' | 'tool';
-  content: string;
+  subMessages: Message[];
+  thinking?: { messageIndex: number; thinking: string };
+  chunks?: { messageIndex: number; chunks: string[] };
+  config: {
+    model?: string;
+    temprature?: number;
+    think?: boolean;
+  };
   timestamp: Date;
-  thinking?: boolean;
-  chunks: string[];
-  temprature: number;
-  processed: boolean;
-}
+  status: "searching" | "inference" | "error" | "pending" | "done";
+  error?: string;
+};
 
 export const StoreNames = {
-  conversations: 'conversations',
-  messages: 'messages'
-}
+  conversations: "conversations",
+  messages: "messages",
+};
 
-export type StoreNames = keyof typeof StoreNames; 
+export type StoreNames = keyof typeof StoreNames;

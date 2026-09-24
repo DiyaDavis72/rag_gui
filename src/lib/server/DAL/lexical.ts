@@ -1,6 +1,6 @@
 import { db } from "../db/db";
 import type { Retrieved } from "../types";
-import { FILTER_WORDS, RELEVANT_NOUNS } from "../constant";
+import { STOP_WORDS, RELEVANT_NOUNS } from "../constant";
 
 export const getLexical = ({
   limit = 10,
@@ -37,7 +37,7 @@ export const getLexical = ({
   const orCandidates = [];
 
   for (const w of queryArr) {
-    if (FILTER_WORDS.includes(w.toLowerCase())) continue;
+    if (STOP_WORDS.has(w.toLowerCase())) continue;
 
     if (RELEVANT_NOUNS.includes(w.toLowerCase())) {
       andCandidates.push(w);

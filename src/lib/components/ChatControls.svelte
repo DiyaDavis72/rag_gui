@@ -1,13 +1,12 @@
 <script lang="ts">
-  import BrainCircuit from "@lucide/svelte/icons/brain-circuit";
-  import Thermometer from "@lucide/svelte/icons/thermometer";
-  import { Range, Select, Label, Checkbox, cn } from "flowbite-svelte";
+  import { BrainCircuit, Send, Thermometer } from "@lucide/svelte";
+  import { Checkbox, cn, Label, Select, Range } from "flowbite-svelte";
   import { page } from "$app/state";
   import { getChatBoxState } from "$lib/state/ChatBoxState.svelte";
-  import type { MODEL_LIST } from "$lib/types";
-  import Send from "@lucide/svelte/icons/send";
-  import { getMessagesState } from "$lib/state/MessagesState.svelte";
   import { getConversationState } from "$lib/state/ConversationState.svelte";
+  import { getMessagesState } from "$lib/state/MessagesState.svelte";
+  import type { MODEL_LIST } from "$lib/types";
+
   const messageState = getMessagesState();
   const conversationState = getConversationState();
   const chatBoxState = getChatBoxState();
@@ -31,6 +30,18 @@
   });
 
   const newMessage = async () => {
+    let history: string | null = null;
+
+    for (const [idx, msg] of messageState.messages.entries()) {
+      if (msg.role !== "user" && msg.role !== "assistant") continue;
+      if (msg.content.trim()) {
+        if (history === null) {
+          history = "####History####\n";
+        }
+        history += `Message ${idx + 1}:\n${msg.content}`;
+      }
+    }
+
     if (disabled) {
       return;
     }
@@ -46,16 +57,21 @@
       });
     }
 
-    await messageState.addMessage({
-      conversationId: convoId,
-      content: chatBoxState.messageBody.trim(),
-      role: "user",
-      chunks: [],
-      thinking: chatBoxState.think,
-      temprature: chatBoxState.temprature,
-      timestamp: new Date(),
-      processed: false,
-    });
+    await messageState.addMessage(
+      {
+        conversationId: convoId,
+        content: history
+          ? history + "\n###New Query:###\n" + chatBoxState.messageBody.trim()
+          : chatBoxState.messageBody.trim(),
+        role: "user",
+        model: chatBoxState.selectedModel,
+        think: chatBoxState.think,
+        temprature: chatBoxState.temprature,
+        timestamp: new Date(),
+        status: "pending",
+      },
+      convoId,
+    );
 
     chatBoxState.messageBody = "";
   };

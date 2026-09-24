@@ -1,11 +1,12 @@
 return {
-  {
-    "neovim/nvim-lspconfig",
-    opts = {
-      servers = {
-        tsc = { enabled = false },
-        vtsls = { enabled = true },
-      },
-    },
-  },
+	{
+		"neovim/nvim-lspconfig",
+		opts = {
+			servers = {
+				tsc = { enabled = false },
+				vtsls = { enabled = true },
+				svelte = { enabled = true },
+			},
+		},
+	},
 }
